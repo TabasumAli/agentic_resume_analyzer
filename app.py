@@ -42,7 +42,7 @@ def extract_pdf_text(file) -> str:
 # ─────────────────────────────────────────────────────────────
 def build_agent() -> Agent:
     llm = LLM(
-        model="openai/gpt-oss-120b",           # Groq's flagship open-weight model
+        model="openai/gpt-oss-20b",           # Groq's flagship open-weight model
         base_url="https://api.groq.com/openai/v1",  # Groq OpenAI-compatible endpoint
         api_key=GROQ_API_KEY,
         temperature=0.2,
