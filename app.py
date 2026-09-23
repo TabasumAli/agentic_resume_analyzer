@@ -1,4 +1,5 @@
 import io
+import os
 import streamlit as st
 from crewai import Agent, LLM
 from pypdf import PdfReader
@@ -20,6 +21,12 @@ except (KeyError, FileNotFoundError):
              "or to the Streamlit Cloud secrets manager.")
     st.stop()
 
+# CrewAI's LLM class is built on litellm. For litellm, Groq models must be
+# addressed with the "groq/" provider prefix (not "openai/"), and litellm
+# picks up the key from the GROQ_API_KEY env var rather than from a
+# base_url + api_key pair. Setting it here makes that available.
+os.environ["GROQ_API_KEY"] = GROQ_API_KEY
+
 # ─────────────────────────────────────────────────────────────
 # PDF extraction helper
 # ─────────────────────────────────────────────────────────────
@@ -38,13 +45,11 @@ def extract_pdf_text(file) -> str:
         return ""
 
 # ─────────────────────────────────────────────────────────────
-# Agent builder — uses openai/gpt-oss-120b via Groq
+# Agent builder — uses openai/gpt-oss-120b via Groq (through litellm)
 # ─────────────────────────────────────────────────────────────
 def build_agent() -> Agent:
     llm = LLM(
-        model="openai/gpt-oss-20b",           # Groq's flagship open-weight model
-        base_url="https://api.groq.com/openai/v1",  # Groq OpenAI-compatible endpoint
-        api_key=GROQ_API_KEY,
+        model="groq/openai/gpt-oss-120b",  # litellm provider prefix: groq/<model>
         temperature=0.2,
     )
     return Agent(
