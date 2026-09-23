@@ -5,6 +5,30 @@ from crewai import Agent, LLM
 from pypdf import PdfReader
 
 # ─────────────────────────────────────────────────────────────
+# Workaround for a known CrewAI/litellm bug (crewAIInc/crewAI#6789):
+# CrewAI tags the system message with an internal "cache_breakpoint"
+# key meant only for native providers (e.g. Anthropic). For providers
+# routed through litellm — Groq included — that key is supposed to be
+# stripped before the request goes out, but isn't in some CrewAI
+# versions, so Groq's strict schema validation rejects the call. We
+# strip it ourselves at the litellm layer as a safety net.
+import litellm
+
+_original_completion = litellm.completion
+
+def _stripped_completion(*args, **kwargs):
+    messages = kwargs.get("messages")
+    if messages:
+        kwargs["messages"] = [
+            {k: v for k, v in m.items() if k != "cache_breakpoint"}
+            if isinstance(m, dict) else m
+            for m in messages
+        ]
+    return _original_completion(*args, **kwargs)
+
+litellm.completion = _stripped_completion
+
+# ─────────────────────────────────────────────────────────────
 # Page setup
 # ─────────────────────────────────────────────────────────────
 st.set_page_config(page_title="Resume Review Agent", page_icon="📄", layout="wide")
