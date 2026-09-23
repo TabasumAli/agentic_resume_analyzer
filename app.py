@@ -44,7 +44,7 @@ def extract_pdf_text(file) -> str:
 def build_agent() -> Agent:
     llm = ChatGroq(
         temperature=0.2,
-        model="llama-3.3-70b-versatile",   # active Groq model
+        model="openai/gpt-oss-120b",   # active Groq model
         groq_api_key=GROQ_API_KEY,
     )
     return Agent(
