@@ -1,7 +1,6 @@
 import io
 import streamlit as st
 from crewai import Agent, LLM
-from langchain_groq import ChatGroq
 from pypdf import PdfReader
 
 # ─────────────────────────────────────────────────────────────
@@ -39,13 +38,14 @@ def extract_pdf_text(file) -> str:
         return ""
 
 # ─────────────────────────────────────────────────────────────
-# Agent builder
+# Agent builder — uses openai/gpt-oss-120b via Groq
 # ─────────────────────────────────────────────────────────────
 def build_agent() -> Agent:
-    llm = ChatGroq(
+    llm = LLM(
+        model="openai/gpt-oss-120b",           # Groq's flagship open-weight model
+        base_url="https://api.groq.com/openai/v1",  # Groq OpenAI-compatible endpoint
+        api_key=GROQ_API_KEY,
         temperature=0.2,
-        model="openai/gpt-oss-120b",   # active Groq model
-        groq_api_key=GROQ_API_KEY,
     )
     return Agent(
         role="Senior Technical Recruiter & Career Coach",
@@ -150,4 +150,4 @@ Give a score from 0–100 with one sentence of justification.
                 st.error(f"❌ Something went wrong: {msg}")
 
 st.divider()
-st.caption("Built with CrewAI + Groq + Streamlit · Single-agent design")
+st.caption("Built with CrewAI + Groq (openai/gpt-oss-120b) + Streamlit · Single-agent design")
