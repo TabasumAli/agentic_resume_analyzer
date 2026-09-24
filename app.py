@@ -179,30 +179,6 @@ html, body, [class*="css"] {
 .stButton > button *,
 .stDownloadButton > button * { color: #FFFFFF !important; }
 
-/* ---------- Score strip ---------- */
-.score-wrap {
-    display: flex; align-items: center; gap: 1.4rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 6px solid var(--red);
-    border-radius: 12px;
-    padding: 1.2rem 1.5rem;
-    margin-bottom: 1rem;
-}
-.score-wrap .score-text h4 {
-    font-family: 'Fraunces', serif;
-    color: var(--ink) !important;
-    font-size: 1rem;
-    margin: 0 0 0.25rem 0;
-}
-.score-wrap .score-text p {
-    color: var(--muted) !important;
-    font-size: 0.9rem;
-    margin: 0;
-    max-width: 60ch;
-    line-height: 1.5;
-}
-
 /* ---------- Tabs ---------- */
 .stTabs [data-baseweb="tab-list"] {
     gap: 0.3rem;
@@ -357,28 +333,6 @@ def parse_sections(raw: str) -> dict:
                 break
     return sections
 
-def extract_score(text: str) -> int:
-    match = re.search(r"(\d{1,3})\s*/\s*100", text) or re.search(r"\b(\d{1,3})\b", text)
-    if match:
-        return max(0, min(100, int(match.group(1))))
-    return 0
-
-def render_gauge(score: int) -> str:
-    radius = 46
-    circumference = 2 * 3.14159 * radius
-    offset = circumference * (1 - score / 100)
-    color = "#4ADE80" if score >= 70 else "#FBBF24" if score >= 40 else "#E63946"
-    return f"""
-    <svg width="110" height="110" viewBox="0 0 110 110">
-        <circle cx="55" cy="55" r="{radius}" fill="none" stroke="#2A2A2A" stroke-width="10"/>
-        <circle cx="55" cy="55" r="{radius}" fill="none" stroke="{color}" stroke-width="10"
-                stroke-dasharray="{circumference:.1f}" stroke-dashoffset="{offset:.1f}"
-                stroke-linecap="round" transform="rotate(-90 55 55)"/>
-        <text x="55" y="61" text-anchor="middle" font-family="Fraunces, serif"
-              font-size="26" font-weight="600" fill="#FFFFFF">{score}</text>
-    </svg>
-    """
-
 # ─────────────────────────────────────────────────────────────
 # SIDEBAR — CV upload + resume text
 # ─────────────────────────────────────────────────────────────
@@ -399,7 +353,7 @@ with st.sidebar:
     st.caption("Built with CrewAI + Groq")
 
 # ─────────────────────────────────────────────────────────────
-# MAIN — top 40% JD, bottom 60% output
+# MAIN — top JD, bottom output
 # ─────────────────────────────────────────────────────────────
 # Hero (compact)
 st.markdown("""
@@ -411,7 +365,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ---- TOP 40%: Job description input ----
+# ---- Job description input ----
 jd_container = st.container()
 with jd_container:
     st.markdown('<div class="section-title"><span class="num">1</span> Job description</div>',
@@ -428,7 +382,7 @@ with jd_container:
 
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-# ---- BOTTOM 60%: Output ----
+# ---- Output ----
 output_container = st.container()
 with output_container:
     if not run:
@@ -493,24 +447,13 @@ One sentence of justification.
                 output = getattr(result, "raw", None) or str(result)
                 sections = parse_sections(output)
 
-                # ── Score strip ──
-                score_body = sections.get("score", "")
-                score = extract_score(score_body)
-                justification = re.sub(r"(?i)score\s*:?\s*\d{1,3}\s*/\s*100", "", score_body)
-                justification = re.sub(r"\d{1,3}\s*/\s*100", "", justification).strip(" .-—\n")
-
-                st.markdown(f"""
-<div class="score-wrap">
-    {render_gauge(score)}
-</div>
-""", unsafe_allow_html=True)
-
                 # ── Tabbed report ──
                 tab_labels = []
                 if "summary" in sections: tab_labels.append("📋 The read")
                 if "match"   in sections: tab_labels.append("✅ What lands")
                 if "gap"     in sections: tab_labels.append("⚠️ What's missing")
                 if "plan"    in sections: tab_labels.append("🛠️ Fix these first")
+                if "score"   in sections: tab_labels.append("📊 Match score")
 
                 if tab_labels:
                     tabs = st.tabs(tab_labels)
@@ -530,6 +473,10 @@ One sentence of justification.
                     if "plan" in sections:
                         with tabs[i]:
                             st.markdown(sections["plan"])
+                        i += 1
+                    if "score" in sections:
+                        with tabs[i]:
+                            st.markdown(sections["score"])
                         i += 1
                 else:
                     st.markdown(output)
