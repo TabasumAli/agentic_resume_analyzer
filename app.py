@@ -56,7 +56,14 @@ st.markdown("""
     --white:      #FFFFFF;
 }
 
-html, body, [class*="css"]  { font-family: 'Inter', sans-serif; }
+html, body, [class*="css"]  { font-family: 'Inter', sans-serif; color: var(--ink); }
+
+/* Streamlit's dark-theme text color otherwise wins over our light
+   panels, making typed/placeholder text invisible. Force it. */
+.stApp, .stApp p, .stApp span, .stApp label, .stApp li,
+.stMarkdown, .stMarkdown p, .stMarkdown li {
+    color: var(--ink) !important;
+}
 
 #MainMenu, footer, header { visibility: hidden; }
 .block-container { padding-top: 1.5rem; max-width: 1100px; }
@@ -122,6 +129,11 @@ html, body, [class*="css"]  { font-family: 'Inter', sans-serif; }
     border-radius: 10px !important;
     font-size: 0.92rem !important;
     color: var(--ink) !important;
+    -webkit-text-fill-color: var(--ink) !important;
+}
+.stTextArea textarea::placeholder {
+    color: var(--slate) !important;
+    opacity: 1 !important;
 }
 .stTextArea textarea:focus {
     border-color: var(--emerald) !important;
