@@ -500,14 +500,10 @@ One sentence of justification.
                 justification = re.sub(r"\d{1,3}\s*/\s*100", "", justification).strip(" .-—\n")
 
                 st.markdown(f"""
-                <div class="score-wrap">
-                    {render_gauge(score)}
-                    <div class="score-text">
-                        <h4>Match score</h4>
-                        <p>{justification or "Overall fit against this role, out of 100."}</p>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+<div class="score-wrap">
+    {render_gauge(score)}
+</div>
+""", unsafe_allow_html=True)
 
                 # ── Tabbed report ──
                 tab_labels = []
