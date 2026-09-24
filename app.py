@@ -35,115 +35,118 @@ litellm.completion = _stripped_completion
 st.set_page_config(page_title="Resume Review — Case File", page_icon="🗂️", layout="wide")
 
 # ─────────────────────────────────────────────────────────────
-# Design system — "recruiter's desk / case file"
-# Ink navy hero, cool paper panels, emerald for matches,
-# amber for gaps and score, Fraunces + Inter type pairing.
+# Design system — single light theme, single text color.
+# One background (#F4F5F7), one foreground (#101820).
+# Accent colors are used ONLY on thin borders / gauge stroke,
+# never as panel backgrounds, so text contrast is uniform.
 # ─────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-    --ink:        #101820;
-    --ink-soft:   #1B2530;
-    --paper:      #EEF1F4;
-    --paper-dim:  #E1E6EA;
-    --emerald:    #1F7A5C;
-    --emerald-bg: #E4F2EB;
-    --amber:      #C9A227;
-    --amber-bg:   #FAF3DE;
-    --slate:      #5B6472;
-    --white:      #FFFFFF;
-    --muted-on-dark: #AEB8C4;
+    --bg:      #F4F5F7;
+    --surface: #FFFFFF;
+    --ink:     #101820;
+    --ink-soft:#2A3542;
+    --muted:   #5B6472;
+    --border:  #D9DEE4;
+    --emerald: #1F7A5C;
+    --amber:   #C9A227;
+    --crimson: #B5432E;
 }
 
-/* ---------- Base ---------- */
-html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+/* ---------- Universal base: ONE bg, ONE fg ---------- */
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg) !important;
+    color: var(--ink) !important;
+}
+.stApp { background: var(--bg) !important; }
+
+/* Every text node inherits ink unless explicitly overridden */
+.stApp, .stApp * {
+    color: var(--ink);
+}
+.stApp p, .stApp span, .stApp label, .stApp li,
+.stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5, .stApp h6,
+.stMarkdown, .stMarkdown * {
+    color: var(--ink) !important;
+}
 
 #MainMenu, footer, header { visibility: hidden; }
 .block-container { padding-top: 1.5rem; max-width: 1100px; }
-.stApp { background: var(--paper); }
 
-/* Force dark text on light app background ONLY (not inside dark panels) */
-.stApp, .stApp p, .stApp span, .stApp label, .stApp li,
-.stMarkdown, .stMarkdown p, .stMarkdown li {
-    color: var(--ink);
-}
-
-/* ---------- Hero letterhead (dark bg → light text) ---------- */
+/* ---------- Hero ---------- */
 .case-hero {
-    background: linear-gradient(155deg, var(--ink) 0%, var(--ink-soft) 100%);
-    border-radius: 18px;
-    padding: 2.6rem 2.8rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 6px solid var(--ink);
+    border-radius: 14px;
+    padding: 2.2rem 2.4rem;
     margin-bottom: 1.8rem;
-    position: relative;
-    overflow: hidden;
 }
-.case-hero::after {
-    content: "";
-    position: absolute; top: -40%; right: -10%;
-    width: 320px; height: 320px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,162,39,0.18) 0%, rgba(201,162,39,0) 70%);
-}
-.case-hero, .case-hero * { color: var(--white); }
 .case-hero .tag {
-    color: var(--amber) !important;
-    font-size: 0.8rem;
-    letter-spacing: 0.03em;
-    font-weight: 600;
-    margin-bottom: 0.6rem;
+    color: var(--emerald) !important;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 0.7rem;
 }
 .case-hero h1 {
     font-family: 'Fraunces', serif;
     font-weight: 600;
-    font-size: 2.6rem;
-    color: var(--white) !important;
-    margin: 0 0 0.5rem 0;
+    font-size: 2.3rem;
+    color: var(--ink) !important;
+    margin: 0 0 0.6rem 0;
     line-height: 1.15;
 }
 .case-hero p {
-    color: var(--muted-on-dark) !important;
-    font-size: 1.02rem;
-    max-width: 46ch;
+    color: var(--muted) !important;
+    font-size: 1rem;
+    max-width: 52ch;
     margin: 0;
+    line-height: 1.55;
 }
 
-/* ---------- Intake panel labels ---------- */
+/* ---------- Panel labels ---------- */
 .panel-label {
     display: flex; align-items: center; gap: 0.6rem;
     font-family: 'Fraunces', serif;
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--ink) !important;
     margin: 0.2rem 0 0.7rem 0;
 }
 .panel-label .num {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 26px; height: 26px; border-radius: 50%;
-    background: var(--ink); color: var(--amber) !important;
-    font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 700;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--ink);
+    color: var(--surface) !important;
+    font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 700;
 }
 
 /* ---------- Inputs ---------- */
 .stTextArea textarea {
-    background: var(--white) !important;
-    border: 1.5px solid var(--paper-dim) !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
     border-radius: 10px !important;
     font-size: 0.92rem !important;
     color: var(--ink) !important;
     -webkit-text-fill-color: var(--ink) !important;
 }
 .stTextArea textarea::placeholder {
-    color: var(--slate) !important;
+    color: var(--muted) !important;
     opacity: 1 !important;
 }
 .stTextArea textarea:focus {
     border-color: var(--emerald) !important;
-    box-shadow: 0 0 0 3px var(--emerald-bg) !important;
+    box-shadow: 0 0 0 3px rgba(31,122,92,0.15) !important;
 }
 [data-testid="stFileUploader"] {
-    background: var(--white);
-    border: 1.5px dashed var(--paper-dim);
+    background: var(--surface) !important;
+    border: 1px dashed var(--border);
     border-radius: 10px;
     padding: 0.4rem 0.6rem;
 }
@@ -152,120 +155,104 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 /* ---------- CTA button ---------- */
 .stButton > button {
     background: var(--ink) !important;
-    color: var(--white) !important;
+    color: var(--surface) !important;
     border: none !important;
     border-radius: 999px !important;
-    padding: 0.75rem 1.5rem !important;
+    padding: 0.75rem 1.6rem !important;
     font-weight: 600 !important;
     font-size: 1rem !important;
-    letter-spacing: 0.01em;
-    transition: transform 0.12s ease, background 0.12s ease;
+    transition: background 0.15s ease, transform 0.12s ease;
 }
 .stButton > button:hover {
     background: var(--emerald) !important;
-    color: var(--white) !important;
+    color: var(--surface) !important;
     transform: translateY(-1px);
 }
-.stButton > button:active { transform: translateY(0); }
+.stButton > button * { color: var(--surface) !important; }
 
-/* ---------- Report cards ---------- */
-.report-card {
-    background: var(--white);
-    color: var(--ink);
-    border-radius: 14px;
-    padding: 1.4rem 1.6rem;
-    margin-bottom: 1rem;
-    border-left: 5px solid var(--slate);
-}
-.report-card.match   { border-left-color: var(--emerald); }
-.report-card.gap     { border-left-color: var(--amber); }
-.report-card.summary { border-left-color: var(--ink); }
-.report-card.plan    { border-left-color: var(--ink); background: var(--paper); }
-
-.report-card, .report-card * { color: var(--ink) !important; }
-.report-card h3 {
-    font-family: 'Fraunces', serif;
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--ink) !important;
-    margin: 0 0 0.6rem 0;
-}
-.report-card p, .report-card li {
-    color: var(--ink) !important;
-    font-size: 0.96rem;
-    line-height: 1.6;
-}
-.report-card ul, .report-card ol { margin: 0.3rem 0 0 0; padding-left: 1.3rem; }
-.report-card li { margin-bottom: 0.35rem; }
-.report-card strong { color: var(--ink) !important; font-weight: 700; }
-.report-card em { color: var(--slate) !important; }
-
-/* ---------- Score gauge (dark bg → light text) ---------- */
+/* ---------- Score strip (light, not dark) ---------- */
 .score-wrap {
     display: flex; align-items: center; gap: 1.6rem;
-    background: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 6px solid var(--ink);
     border-radius: 14px;
-    padding: 1.6rem 1.8rem;
-    margin-bottom: 1.2rem;
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 1.4rem;
 }
-.score-wrap, .score-wrap * { color: var(--white) !important; }
 .score-wrap .score-text h4 {
     font-family: 'Fraunces', serif;
-    color: var(--white) !important;
+    color: var(--ink) !important;
     font-size: 1.1rem;
     margin: 0 0 0.3rem 0;
 }
 .score-wrap .score-text p {
-    color: var(--muted-on-dark) !important;
-    font-size: 0.92rem;
+    color: var(--muted) !important;
+    font-size: 0.94rem;
     margin: 0;
-    max-width: 42ch;
+    max-width: 46ch;
+    line-height: 1.5;
 }
 
-/* ---------- Streamlit tabs ---------- */
+/* ---------- Tabs ---------- */
 .stTabs [data-baseweb="tab-list"] {
-    gap: 0.4rem;
-    border-bottom: 1px solid var(--paper-dim);
+    gap: 0.35rem;
+    border-bottom: 1px solid var(--border);
+    background: transparent;
 }
 .stTabs [data-baseweb="tab"] {
-    background: var(--white);
+    background: var(--surface) !important;
+    border: 1px solid var(--border);
+    border-bottom: none;
     border-radius: 10px 10px 0 0;
     padding: 0.6rem 1.1rem;
-    color: var(--slate) !important;
+    color: var(--ink) !important;
     font-weight: 600;
 }
-.stTabs [data-baseweb="tab"] * { color: inherit !important; }
+.stTabs [data-baseweb="tab"] * { color: var(--ink) !important; }
 .stTabs [aria-selected="true"] {
     background: var(--ink) !important;
-    color: var(--white) !important;
+    border-color: var(--ink) !important;
 }
-.stTabs [aria-selected="true"] * { color: var(--white) !important; }
+.stTabs [aria-selected="true"] * { color: var(--surface) !important; }
 
-/* Tab panel: give it card-like styling */
 .stTabs [role="tabpanel"] {
-    background: var(--white);
-    border-radius: 0 14px 14px 14px;
-    padding: 1.4rem 1.6rem;
+    background: var(--surface) !important;
+    border: 1px solid var(--border);
+    border-top: none;
     border-left: 5px solid var(--ink);
-    margin-top: 0;
+    border-radius: 0 12px 12px 12px;
+    padding: 1.4rem 1.6rem;
 }
 .stTabs [role="tabpanel"] * { color: var(--ink) !important; }
 .stTabs [role="tabpanel"] ul,
-.stTabs [role="tabpanel"] ol { padding-left: 1.3rem; }
+.stTabs [role="tabpanel"] ol { padding-left: 1.3rem; margin: 0.4rem 0; }
 .stTabs [role="tabpanel"] li {
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.45rem;
     line-height: 1.6;
 }
-.stTabs [role="tabpanel"] strong { font-weight: 700; }
-.stTabs [role="tabpanel"] p { line-height: 1.6; }
+.stTabs [role="tabpanel"] p { line-height: 1.6; margin: 0.4rem 0; }
+.stTabs [role="tabpanel"] strong { font-weight: 700; color: var(--ink) !important; }
+.stTabs [role="tabpanel"] em { color: var(--muted) !important; }
 
-/* Colored left border per tab index (summary/match/gap/plan) */
+/* Per-tab accent border (summary / match / gap / plan) */
 .stTabs [role="tabpanel"]:nth-of-type(1) { border-left-color: var(--ink); }
 .stTabs [role="tabpanel"]:nth-of-type(2) { border-left-color: var(--emerald); }
 .stTabs [role="tabpanel"]:nth-of-type(3) { border-left-color: var(--amber); }
-.stTabs [role="tabpanel"]:nth-of-type(4) { border-left-color: var(--ink); }
+.stTabs [role="tabpanel"]:nth-of-type(4) { border-left-color: var(--crimson); }
 
-.stAlert { border-radius: 10px; }
+/* ---------- Alerts (Streamlit default overrides) ---------- */
+.stAlert {
+    border-radius: 10px;
+    background: var(--surface) !important;
+    color: var(--ink) !important;
+}
+.stAlert * { color: var(--ink) !important; }
+
+/* ---------- Caption ---------- */
+.stCaption, [data-testid="stCaptionContainer"] * {
+    color: var(--muted) !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -274,8 +261,8 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 # ─────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="case-hero">
-    <div class="tag">CASE FILE · RESUME REVIEW</div>
-    <h1>Put your resume<br>under a recruiter's lens</h1>
+    <div class="tag">Case File · Resume Review</div>
+    <h1>Put your resume under a recruiter's lens</h1>
     <p>Drop in a resume and a job description. Get an honest read on
     fit — what lands, what's missing, and what to fix first.</p>
 </div>
@@ -372,12 +359,12 @@ def render_gauge(score: int) -> str:
     color = "#1F7A5C" if score >= 70 else "#C9A227" if score >= 40 else "#B5432E"
     return f"""
     <svg width="110" height="110" viewBox="0 0 110 110">
-        <circle cx="55" cy="55" r="{radius}" fill="none" stroke="#2A3542" stroke-width="10"/>
+        <circle cx="55" cy="55" r="{radius}" fill="none" stroke="#D9DEE4" stroke-width="10"/>
         <circle cx="55" cy="55" r="{radius}" fill="none" stroke="{color}" stroke-width="10"
                 stroke-dasharray="{circumference:.1f}" stroke-dashoffset="{offset:.1f}"
                 stroke-linecap="round" transform="rotate(-90 55 55)"/>
         <text x="55" y="61" text-anchor="middle" font-family="Fraunces, serif"
-              font-size="26" font-weight="600" fill="#FFFFFF">{score}</text>
+              font-size="26" font-weight="600" fill="#101820">{score}</text>
     </svg>
     """
 
@@ -471,7 +458,7 @@ One sentence of justification.
 
             st.write("")
 
-            # ── Score gauge ──────────────────────────────────
+            # ── Score strip ──────────────────────────────────
             score_body = sections.get("score", "")
             score = extract_score(score_body)
             justification = re.sub(r"(?i)score\s*:?\s*\d{1,3}\s*/\s*100", "", score_body)
@@ -514,7 +501,6 @@ One sentence of justification.
                         st.markdown(sections["plan"])
                     i += 1
             else:
-                # Fallback: render raw markdown properly
                 st.markdown(output)
 
         except Exception as e:
