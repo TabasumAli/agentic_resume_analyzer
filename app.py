@@ -54,22 +54,23 @@ st.markdown("""
     --amber-bg:   #FAF3DE;
     --slate:      #5B6472;
     --white:      #FFFFFF;
+    --muted-on-dark: #AEB8C4;
 }
 
-html, body, [class*="css"]  { font-family: 'Inter', sans-serif; color: var(--ink); }
-
-/* Streamlit's dark-theme text color otherwise wins over our light
-   panels, making typed/placeholder text invisible. Force it. */
-.stApp, .stApp p, .stApp span, .stApp label, .stApp li,
-.stMarkdown, .stMarkdown p, .stMarkdown li {
-    color: var(--ink) !important;
-}
+/* ---------- Base ---------- */
+html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
 #MainMenu, footer, header { visibility: hidden; }
 .block-container { padding-top: 1.5rem; max-width: 1100px; }
 .stApp { background: var(--paper); }
 
-/* ---------- Hero letterhead ---------- */
+/* Force dark text on light app background ONLY (not inside dark panels) */
+.stApp, .stApp p, .stApp span, .stApp label, .stApp li,
+.stMarkdown, .stMarkdown p, .stMarkdown li {
+    color: var(--ink);
+}
+
+/* ---------- Hero letterhead (dark bg → light text) ---------- */
 .case-hero {
     background: linear-gradient(155deg, var(--ink) 0%, var(--ink-soft) 100%);
     border-radius: 18px;
@@ -84,8 +85,9 @@ html, body, [class*="css"]  { font-family: 'Inter', sans-serif; color: var(--ink
     width: 320px; height: 320px; border-radius: 50%;
     background: radial-gradient(circle, rgba(201,162,39,0.18) 0%, rgba(201,162,39,0) 70%);
 }
+.case-hero, .case-hero * { color: var(--white); }
 .case-hero .tag {
-    color: var(--amber);
+    color: var(--amber) !important;
     font-size: 0.8rem;
     letter-spacing: 0.03em;
     font-weight: 600;
@@ -95,12 +97,12 @@ html, body, [class*="css"]  { font-family: 'Inter', sans-serif; color: var(--ink
     font-family: 'Fraunces', serif;
     font-weight: 600;
     font-size: 2.6rem;
-    color: var(--white);
+    color: var(--white) !important;
     margin: 0 0 0.5rem 0;
     line-height: 1.15;
 }
 .case-hero p {
-    color: #AEB8C4;
+    color: var(--muted-on-dark) !important;
     font-size: 1.02rem;
     max-width: 46ch;
     margin: 0;
@@ -112,13 +114,13 @@ html, body, [class*="css"]  { font-family: 'Inter', sans-serif; color: var(--ink
     font-family: 'Fraunces', serif;
     font-size: 1.15rem;
     font-weight: 600;
-    color: var(--ink);
+    color: var(--ink) !important;
     margin: 0.2rem 0 0.7rem 0;
 }
 .panel-label .num {
     display: inline-flex; align-items: center; justify-content: center;
     width: 26px; height: 26px; border-radius: 50%;
-    background: var(--ink); color: var(--amber);
+    background: var(--ink); color: var(--amber) !important;
     font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 700;
 }
 
@@ -145,6 +147,7 @@ html, body, [class*="css"]  { font-family: 'Inter', sans-serif; color: var(--ink
     border-radius: 10px;
     padding: 0.4rem 0.6rem;
 }
+[data-testid="stFileUploader"] * { color: var(--ink) !important; }
 
 /* ---------- CTA button ---------- */
 .stButton > button {
@@ -160,6 +163,7 @@ html, body, [class*="css"]  { font-family: 'Inter', sans-serif; color: var(--ink
 }
 .stButton > button:hover {
     background: var(--emerald) !important;
+    color: var(--white) !important;
     transform: translateY(-1px);
 }
 .stButton > button:active { transform: translateY(0); }
@@ -167,6 +171,7 @@ html, body, [class*="css"]  { font-family: 'Inter', sans-serif; color: var(--ink
 /* ---------- Report cards ---------- */
 .report-card {
     background: var(--white);
+    color: var(--ink);
     border-radius: 14px;
     padding: 1.4rem 1.6rem;
     margin-bottom: 1rem;
@@ -177,18 +182,25 @@ html, body, [class*="css"]  { font-family: 'Inter', sans-serif; color: var(--ink
 .report-card.summary { border-left-color: var(--ink); }
 .report-card.plan    { border-left-color: var(--ink); background: var(--paper); }
 
+.report-card, .report-card * { color: var(--ink) !important; }
 .report-card h3 {
     font-family: 'Fraunces', serif;
     font-size: 1.15rem;
     font-weight: 600;
-    color: var(--ink);
+    color: var(--ink) !important;
     margin: 0 0 0.6rem 0;
 }
-.report-card p, .report-card li { color: var(--ink); font-size: 0.96rem; line-height: 1.55; }
-.report-card ul { margin: 0; padding-left: 1.2rem; }
-.report-card ol { margin: 0; padding-left: 1.2rem; }
+.report-card p, .report-card li {
+    color: var(--ink) !important;
+    font-size: 0.96rem;
+    line-height: 1.6;
+}
+.report-card ul, .report-card ol { margin: 0.3rem 0 0 0; padding-left: 1.3rem; }
+.report-card li { margin-bottom: 0.35rem; }
+.report-card strong { color: var(--ink) !important; font-weight: 700; }
+.report-card em { color: var(--slate) !important; }
 
-/* ---------- Score gauge ---------- */
+/* ---------- Score gauge (dark bg → light text) ---------- */
 .score-wrap {
     display: flex; align-items: center; gap: 1.6rem;
     background: var(--ink);
@@ -196,18 +208,62 @@ html, body, [class*="css"]  { font-family: 'Inter', sans-serif; color: var(--ink
     padding: 1.6rem 1.8rem;
     margin-bottom: 1.2rem;
 }
+.score-wrap, .score-wrap * { color: var(--white) !important; }
 .score-wrap .score-text h4 {
     font-family: 'Fraunces', serif;
-    color: var(--white);
+    color: var(--white) !important;
     font-size: 1.1rem;
     margin: 0 0 0.3rem 0;
 }
 .score-wrap .score-text p {
-    color: #AEB8C4;
+    color: var(--muted-on-dark) !important;
     font-size: 0.92rem;
     margin: 0;
     max-width: 42ch;
 }
+
+/* ---------- Streamlit tabs ---------- */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 0.4rem;
+    border-bottom: 1px solid var(--paper-dim);
+}
+.stTabs [data-baseweb="tab"] {
+    background: var(--white);
+    border-radius: 10px 10px 0 0;
+    padding: 0.6rem 1.1rem;
+    color: var(--slate) !important;
+    font-weight: 600;
+}
+.stTabs [data-baseweb="tab"] * { color: inherit !important; }
+.stTabs [aria-selected="true"] {
+    background: var(--ink) !important;
+    color: var(--white) !important;
+}
+.stTabs [aria-selected="true"] * { color: var(--white) !important; }
+
+/* Tab panel: give it card-like styling */
+.stTabs [role="tabpanel"] {
+    background: var(--white);
+    border-radius: 0 14px 14px 14px;
+    padding: 1.4rem 1.6rem;
+    border-left: 5px solid var(--ink);
+    margin-top: 0;
+}
+.stTabs [role="tabpanel"] * { color: var(--ink) !important; }
+.stTabs [role="tabpanel"] ul,
+.stTabs [role="tabpanel"] ol { padding-left: 1.3rem; }
+.stTabs [role="tabpanel"] li {
+    margin-bottom: 0.4rem;
+    line-height: 1.6;
+}
+.stTabs [role="tabpanel"] strong { font-weight: 700; }
+.stTabs [role="tabpanel"] p { line-height: 1.6; }
+
+/* Colored left border per tab index (summary/match/gap/plan) */
+.stTabs [role="tabpanel"]:nth-of-type(1) { border-left-color: var(--ink); }
+.stTabs [role="tabpanel"]:nth-of-type(2) { border-left-color: var(--emerald); }
+.stTabs [role="tabpanel"]:nth-of-type(3) { border-left-color: var(--amber); }
+.stTabs [role="tabpanel"]:nth-of-type(4) { border-left-color: var(--ink); }
 
 .stAlert { border-radius: 10px; }
 </style>
@@ -235,10 +291,6 @@ except (KeyError, FileNotFoundError):
              "or to the Streamlit Cloud secrets manager.")
     st.stop()
 
-# CrewAI's LLM class is built on litellm. For litellm, Groq models must be
-# addressed with the "groq/" provider prefix (not "openai/"), and litellm
-# picks up the key from the GROQ_API_KEY env var rather than from a
-# base_url + api_key pair. Setting it here makes that available.
 os.environ["GROQ_API_KEY"] = GROQ_API_KEY
 
 # ─────────────────────────────────────────────────────────────
@@ -259,11 +311,11 @@ def extract_pdf_text(file) -> str:
         return ""
 
 # ─────────────────────────────────────────────────────────────
-# Agent builder — uses openai/gpt-oss-120b via Groq (through litellm)
+# Agent builder
 # ─────────────────────────────────────────────────────────────
 def build_agent() -> Agent:
     llm = LLM(
-        model="groq/openai/gpt-oss-120b",  # litellm provider prefix: groq/<model>
+        model="groq/openai/gpt-oss-120b",
         temperature=0.2,
     )
     return Agent(
@@ -281,9 +333,7 @@ def build_agent() -> Agent:
     )
 
 # ─────────────────────────────────────────────────────────────
-# Output parsing — split the agent's markdown into sections so
-# each can be rendered as its own styled card instead of one
-# long plain markdown block.
+# Output parsing
 # ─────────────────────────────────────────────────────────────
 SECTION_MAP = [
     ("Match Summary", "summary"),
@@ -387,22 +437,29 @@ JOB DESCRIPTION:
 {jd_text[:8000]}
 \"\"\"
 
-Return your answer in this exact Markdown structure:
+Return your answer in this exact Markdown structure.
+Use ONE bullet per idea, keep each bullet to 1–2 lines, and
+put a blank line between every bullet and every section.
 
 ## ✅ Match Summary
-One short paragraph on overall fit.
+One short paragraph (2–3 sentences) on overall fit.
 
 ## 🎯 Matching Skills
-Bullet list of skills/experience in the resume that match the JD.
+- **Skill name** — how it appears in the resume
+- **Skill name** — how it appears in the resume
 
 ## ❌ Missing or Weak Areas
-Bullet list of JD requirements not found in the resume.
+- **Requirement** — what's absent or thin
+- **Requirement** — what's absent or thin
 
 ## 💡 Improvement Recommendations
-Numbered, actionable suggestions to strengthen the resume for this role.
+1. **Action title** — one concrete step.
+2. **Action title** — one concrete step.
+3. **Action title** — one concrete step.
 
 ## 📊 Match Score
-Give a score from 0–100 with one sentence of justification.
+Score: NN/100
+One sentence of justification.
 """
 
     with st.spinner("Reading the file…"):
@@ -414,10 +471,12 @@ Give a score from 0–100 with one sentence of justification.
 
             st.write("")
 
-            # Score gauge
+            # ── Score gauge ──────────────────────────────────
             score_body = sections.get("score", "")
             score = extract_score(score_body)
-            justification = re.sub(r"\d{1,3}\s*/\s*100", "", score_body).strip(" .-—")
+            justification = re.sub(r"(?i)score\s*:?\s*\d{1,3}\s*/\s*100", "", score_body)
+            justification = re.sub(r"\d{1,3}\s*/\s*100", "", justification).strip(" .-—\n")
+
             st.markdown(f"""
             <div class="score-wrap">
                 {render_gauge(score)}
@@ -428,45 +487,34 @@ Give a score from 0–100 with one sentence of justification.
             </div>
             """, unsafe_allow_html=True)
 
-            # Summary
-            if "summary" in sections:
-                st.markdown(f"""
-                <div class="report-card summary">
-                    <h3>The read</h3>
-                    <p>{sections['summary']}</p>
-                </div>
-                """, unsafe_allow_html=True)
+            # ── Tabbed report ────────────────────────────────
+            tab_labels = []
+            if "summary" in sections: tab_labels.append("📋 The read")
+            if "match"   in sections: tab_labels.append("✅ What lands")
+            if "gap"     in sections: tab_labels.append("⚠️ What's missing")
+            if "plan"    in sections: tab_labels.append("🛠️ Fix these first")
 
-            # Matches + gaps side by side
-            c1, c2 = st.columns(2)
-            with c1:
+            if tab_labels:
+                tabs = st.tabs(tab_labels)
+                i = 0
+                if "summary" in sections:
+                    with tabs[i]:
+                        st.markdown(sections["summary"])
+                    i += 1
                 if "match" in sections:
-                    st.markdown(f"""
-                    <div class="report-card match">
-                        <h3>What lands</h3>
-                        {sections['match']}
-                    </div>
-                    """, unsafe_allow_html=True)
-            with c2:
+                    with tabs[i]:
+                        st.markdown(sections["match"])
+                    i += 1
                 if "gap" in sections:
-                    st.markdown(f"""
-                    <div class="report-card gap">
-                        <h3>What's missing</h3>
-                        {sections['gap']}
-                    </div>
-                    """, unsafe_allow_html=True)
-
-            # Recommendations
-            if "plan" in sections:
-                st.markdown(f"""
-                <div class="report-card plan">
-                    <h3>Fix these first</h3>
-                    {sections['plan']}
-                </div>
-                """, unsafe_allow_html=True)
-
-            if not sections:
-                # Fallback if parsing didn't match the expected headers
+                    with tabs[i]:
+                        st.markdown(sections["gap"])
+                    i += 1
+                if "plan" in sections:
+                    with tabs[i]:
+                        st.markdown(sections["plan"])
+                    i += 1
+            else:
+                # Fallback: render raw markdown properly
                 st.markdown(output)
 
         except Exception as e:
