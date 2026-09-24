@@ -350,7 +350,7 @@ with st.sidebar:
     )
 
     st.markdown("---")
-    st.caption("Built with CrewAI + Groq")
+    st.caption("Developed by TabsDev")
 
 # ─────────────────────────────────────────────────────────────
 # MAIN — top JD, bottom output
